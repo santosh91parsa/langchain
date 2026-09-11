@@ -69,33 +69,51 @@ print(reply.content)
 
 ---
 
-## 🚀 Complete Working Example (`simple_chain.py`)
+## 🚀 Examples
+
+### Example 1: Basic Console Output ([`simple_chain.py`](simple_chain.py))
 
 ```python
-import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 
-# Load environment variables (.env) if present
 load_dotenv()
 
-# 1. Initialize the Chat Model
 model = ChatOpenAI(model="gpt-oss-120b")
-
-# 2. Define the Prompt Template
-prompt = ChatPromptTemplate.from_template(
-    "Explain what is {topic} in two sentences"
-)
-
-# 3. Wire them together into a Chain using the pipe operator (|)
+prompt = ChatPromptTemplate.from_template("Explain what is {topic} in two sentences")
 chain = prompt | model
 
-# 4. Invoke the chain with variables
 reply = chain.invoke({"topic": "DNS"})
-
-# 5. Output the result
 print(reply.content)
+```
+
+### Example 2: Chain with File Output ([`chain_to_file.py`](chain_to_file.py))
+
+A simplified pattern demonstrating file persistence:
+* No manual unpacking of `os.environ` keys (`ChatOpenAI` reads them automatically).
+* Clean `pathlib.Path` usage at top-level.
+* Saves output directly to disk.
+
+```python
+from pathlib import Path
+from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+
+load_dotenv()
+
+# Model automatically uses OPENAI_BASE_URL and OPENAI_API_KEY
+model = ChatOpenAI(model="glm-5.2")
+prompt = ChatPromptTemplate.from_template("Explain {topic} in two sentences.")
+chain = prompt | model
+
+reply = chain.invoke({"topic": "how DNS resolves a domain name"})
+
+# Persist output
+out_dir = Path("output")
+out_dir.mkdir(exist_ok=True)
+(out_dir / "dns_resolution.txt").write_text(reply.content)
 ```
 
 ---
@@ -115,6 +133,8 @@ pip install -r requirements.txt
 export OPENAI_API_KEY="your-api-key"
 export OPENAI_BASE_URL="your-api-url"
 
-# 3. Run the script
+# 3. Run either script
 python simple_chain.py
+python chain_to_file.py
 ```
+
