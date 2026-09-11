@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# OS / Editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
